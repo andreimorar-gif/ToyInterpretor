@@ -8,8 +8,10 @@ import interpreter.model.adt.MyList;
 import interpreter.model.adt.MyStack;
 import interpreter.model.type.BoolType;
 import interpreter.model.type.IntType;
+import interpreter.model.type.StringType;
 import interpreter.model.value.BoolValue;
 import interpreter.model.value.IntValue;
+import interpreter.model.value.StringValue;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,6 +33,11 @@ class VarDeclStmtTest {
         PrgState state = freshState(new VarDeclStmt("v",new BoolType()));
         step(state);
         assertEquals(new BoolValue(false),state.getSymTable().lookup("v"));
+    }
+    @Test void stringDeclarationStartsAtFalse() throws MyException {
+        PrgState state = freshState(new VarDeclStmt("v",new StringType()));
+        step(state);
+        assertEquals(new StringValue(""),state.getSymTable().lookup("v"));
     }
     @Test void alreadyDeclaredVariablesThrow() {
         PrgState state = freshState(new VarDeclStmt("v",new IntType()));
