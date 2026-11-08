@@ -60,4 +60,30 @@ class ControllerTest {
                 c = log.indexOf("Out:"), d = log.indexOf("FileTable:");
         assertTrue(0 <= a && a < b && b < c && c < d);
     }
+
+    @Test
+    void fileExampleReadsBothNumbersAndClosesTheFile() throws Exception {
+        Path in = dir.resolve("test.in");
+        Files.writeString(in, "15\n50\n");
+        PrgState s = run(Examples.fileExample(in.toString()));
+        assertEquals(new IntValue(15), s.getOut().get(0));
+        assertEquals(new IntValue(50), s.getOut().get(1));
+        assertTrue(s.getFileTable().toMap().isEmpty());
+    }
+
+    @Test
+    void fileExampleWithAnEmptyFilePrintsZeroTwice() throws Exception {
+        Path in = dir.resolve("empty.in");
+        Files.writeString(in,"");
+        PrgState s = run(Examples.fileExample(in.toString()));
+        assertEquals(new IntValue(0), s.getOut().get(0));
+        assertEquals(new IntValue(0), s.getOut().get(1));
+    }
+
+    @Test
+    void example5PrintsFive() throws MyException {
+        PrgState state = run(Examples.EX5);
+        assertEquals(1,state.getOut().size());
+        assertEquals(new IntValue(5), state.getOut().get(0));
+    }
 }
