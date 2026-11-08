@@ -103,4 +103,21 @@ class FileStmtTest {
         assertThrows(StatementException.class,()->new ReadFileStmt(file,"z").execute(state));
     }
 
+    @Test
+    void closingANonStringThrows() {
+        var stmt = new CloseRFileStmt(new ValueExp(new IntValue(4)));
+        assertThrows(StatementException.class,() -> stmt.execute(state));
+    }
+
+    @Test
+    void closeRemovesFileFromFileTable() throws MyException {
+        new OpenRFileStmt(file).execute(state);
+        new CloseRFileStmt(file).execute(state);
+        assertFalse(state.getFileTable().isDefined(fileName));
+    }
+
+    @Test
+    void closingFileThatIsNotOpenedThrows() throws MyException {
+        assertThrows(StatementException.class,() -> new CloseRFileStmt(file).execute(state));
+    }
 }
