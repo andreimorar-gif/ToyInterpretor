@@ -5,9 +5,11 @@ import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
 import interpreter.model.type.BoolType;
 import interpreter.model.type.IntType;
+import interpreter.model.type.RefType;
 import interpreter.model.type.StringType;
 import interpreter.model.value.BoolValue;
 import interpreter.model.value.IntValue;
+import interpreter.model.value.RefValue;
 import interpreter.model.value.StringValue;
 import org.junit.jupiter.api.Test;
 
@@ -41,5 +43,10 @@ class VarDeclStmtTest {
         state.getSymTable().put("v",new IntValue(0));
         var ex = assertThrows(StatementException.class,()->step(state));
         assertEquals("variable v is already declared",ex.getMessage());
+    }
+    @Test void refDeclarationStartsAtAddressZero() throws MyException {
+        PrgState state = freshState(new VarDeclStmt("v",new RefType(new IntType())));
+        step(state);
+        assertEquals(new RefValue(0,new IntType()),state.getSymTable().lookup("v"));
     }
 }

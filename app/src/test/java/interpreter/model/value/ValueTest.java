@@ -2,6 +2,7 @@ package interpreter.model.value;
 
 import interpreter.model.type.BoolType;
 import interpreter.model.type.IntType;
+import interpreter.model.type.RefType;
 import interpreter.model.type.StringType;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +16,9 @@ public class ValueTest {
         assertEquals(new BoolType(), new BoolValue(true).getType());
     }
     @Test void stringValueHasStringType() {assertEquals(new StringType(), new StringValue("a").getType());}
+    @Test void refValueHasRefType() {
+        assertEquals(new RefType(new IntType()),new RefValue(1,new IntType()).getType());
+    }
     @Test void valuesWithSameContentAreEqual() {
         assertEquals(new IntValue(2),new IntValue(2));
         assertEquals(new BoolValue(true), new BoolValue(true));
@@ -36,5 +40,8 @@ public class ValueTest {
     }
     @Test void stringValuesPrintWithQuotes() {
         assertEquals("\"test.in\"",new StringValue("test.in").toString());
+    }
+    @Test void refValuesPrintsAsPairs() {
+        assertEquals("(1, int)",new RefValue(1,new IntType()).toString());
     }
 }
