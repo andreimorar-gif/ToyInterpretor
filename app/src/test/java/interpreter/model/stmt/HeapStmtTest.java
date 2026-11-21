@@ -46,4 +46,31 @@ public class HeapStmtTest {
                 ()->new NewStmt("v", exp).execute(state));
     }
 
+
+    @Test
+    void writeHeapChangesTheLocation() throws MyException {
+        new NewStmt("v", new ValueExp(new IntValue(20))).execute(state);
+        new WriteHeapStmt("v", new ValueExp(new IntValue(30))).execute(state);
+        assertEquals(new IntValue(30), state.getHeap().get(1));
+        assertEquals(new RefValue(1, new IntType()), state.getSymTable().lookup("v"));
+    }
+    @Test
+    void writeHeapOnANonReferenceThrows() {
+        new VarDeclStmt("x",new IntType()).execute(state);
+        assertThrows(StatementException.class,
+                ()->new WriteHeapStmt("x", new ValueExp(new IntValue(20))).execute(state));
+    }
+    @Test
+    void writeHeapToAnAddressNotInTheHeapThrows() {
+        assertThrows(StatementException.class,
+                ()->new WriteHeapStmt("v", new ValueExp(new IntValue(20))).execute(state));
+    }
+    @Test
+    void writeHeapWithAValueOfWrongTypeThrows() {
+        new NewStmt("v", new ValueExp(new IntValue(20))).execute(state);
+        var exp = new ValueExp(new BoolValue(true));
+        assertThrows(StatementException.class,
+                ()->new WriteHeapStmt("v", exp).execute(state));
+    }
+
 }
