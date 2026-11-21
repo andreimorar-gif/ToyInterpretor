@@ -6,7 +6,7 @@ import interpreter.model.exp.IExp;
 
 public record PrintStmt(IExp exp) implements IStmt { //S4
     @Override public PrgState execute(PrgState state) throws MyException {
-        state.getOut().add(exp.eval(state.getSymTable()));
+        state.getOut().add(exp.eval(state.getSymTable(),state.getHeap()));
         return state;
     }
     @Override public String toString() {return "print("+exp+")";}
