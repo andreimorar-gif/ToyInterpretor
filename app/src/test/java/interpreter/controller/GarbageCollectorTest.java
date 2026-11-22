@@ -27,4 +27,21 @@ class GarbageCollectorTest {
         Map<Integer, IValue> kept = GarbageCollector.unsafeGarbageCollector(roots,heap);
         assertEquals(Set.of(2,3), kept.keySet()); //1 is wrongly removed
     }
+    @Test
+    void unreachableLocationsAreRemoved() {
+        Set<Integer> roots = GarbageCollector.getAddrFromSymTable(symTable);
+        Map<Integer, IValue> kept = GarbageCollector.safeGarbageCollector(roots,heap);
+        assertFalse(kept.containsKey(4));
+    }
+    @Test
+    void keepsTheLocationsReachableThroughTheHeap() {
+        Set<Integer> roots = GarbageCollector.getAddrFromSymTable(symTable);
+        Map<Integer, IValue> kept = GarbageCollector.safeGarbageCollector(roots, heap);
+        assertEquals(Set.of(1, 2, 3), kept.keySet()); // 4 is garbage, 1 is not
+    }
+    @Test
+    void reachableAddressesInTheHeap() {
+        assertEquals(Set.of(1,2,3), GarbageCollector.reachableAddresses(Set.of(2,3), heap));
+    }
+
 }
