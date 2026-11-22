@@ -6,6 +6,8 @@ import interpreter.model.PrgState;
 import interpreter.model.stmt.IStmt;
 import interpreter.repository.IRepository;
 
+import static interpreter.controller.GarbageCollector.*;
+
 public class Controller {
     private final IRepository repo;
     private final boolean displayFlag;
@@ -27,6 +29,11 @@ public class Controller {
         display(prg);                         // only if the display flag is on
         while (!prg.getExeStack().isEmpty()) {
             oneStep(prg);
+            repo.logPrgStateExec();
+            prg.getHeap().setContent(unsafeGarbageCollector(
+                    getAddrFromSymTable(prg.getSymTable().toMap().values()),
+                    prg.getHeap().getContent()
+            ));
             repo.logPrgStateExec();
             display(prg);
         }

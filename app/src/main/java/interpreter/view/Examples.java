@@ -53,4 +53,12 @@ public final class Examples {
             new IfStmt(new RelationalExp(RelOp.LT,new VarExp("a"),new VarExp("b")),
                     new PrintStmt(new VarExp("a")),
                     new PrintStmt(new VarExp("b")))))));
+
+    // ExampleGarbage: Ref int v; new(v, 20); Ref Ref int a; new(a, v); new(v, 30); print(rH(rH(a)))
+    public static final IStmt EXAMPLE = new CompStmt(new VarDeclStmt("v",new RefType(new IntType())),
+            new CompStmt(new NewStmt("v",new ValueExp(new IntValue(20))),
+                    new CompStmt(new VarDeclStmt("a",new RefType(new RefType(new IntType()))),
+                            new CompStmt(new NewStmt("a",new VarExp("v")),
+                                    new CompStmt(new NewStmt("v",new ValueExp(new IntValue(30))),
+                                            new PrintStmt(new ReadHeapExp(new ReadHeapExp(new VarExp("a")))))))));
 }
