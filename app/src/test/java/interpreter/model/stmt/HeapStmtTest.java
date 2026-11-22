@@ -3,14 +3,17 @@ package interpreter.model.stmt;
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
-import interpreter.model.exp.ValueExp;
+import interpreter.model.exp.*;
 import interpreter.model.type.IntType;
 import interpreter.model.type.RefType;
 import interpreter.model.value.BoolValue;
+import interpreter.model.value.IValue;
 import interpreter.model.value.IntValue;
 import interpreter.model.value.RefValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,4 +76,38 @@ public class HeapStmtTest {
                 ()->new WriteHeapStmt("v", exp).execute(state));
     }
 
+
+    private static IStmt countdown(int n) {
+        return new CompStmt(new VarDeclStmt("v",new IntType()),
+                new CompStmt(new AssignStmt("v",new ValueExp(new IntValue(n))),
+                        new WhileStmt(
+                                new RelationalExp(RelOp.GT,new VarExp("v"),new ValueExp(new IntValue(0))),
+                                new CompStmt(new PrintStmt(new VarExp("v")),
+                                        new AssignStmt("v",new ArithExp(ArithOp.SUB,
+                                                new VarExp("v"),new ValueExp(new IntValue(1)))))
+                        )));
+    }
+    private static List<IValue> run(IStmt program) throws MyException {
+        PrgState s = PrgState.of(program);
+        while(!s.getExeStack().isEmpty())
+            s.getExeStack().pop().execute(s);
+        return s.getOut().toList();
+    }
+    @Test
+    void whileThatRunsZeroTimes() throws MyException {
+        assertEquals(List.of(),run(countdown(0)));
+    }
+    @Test
+    void whileThatRunsOneTime() throws MyException {
+        assertEquals(List.of(new IntValue(1)),run(countdown(1)));
+    }
+    @Test
+    void whileThatRunsSeveralTimes() throws MyException {
+        assertEquals(List.of(new IntValue(3),new IntValue(2),new IntValue(1)),run(countdown(3)));
+    }
+    @Test
+    void whileWithANonBooleanConditionThrows() {
+        var loop = new WhileStmt(new ValueExp(new IntValue(1)), new NopStmt());
+        assertThrows(StatementException.class, () -> loop.execute(state));
+    }
 }
