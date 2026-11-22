@@ -14,7 +14,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GarbageCollectorTest {
-    // the state of EXAMPLE after new(v, 30): v -> (3, int), a -> (2, Ref(int))
+    // the state of EX9 after new(v, 30): v -> (3, int), a -> (2, Ref(int))
     private final List<IValue> symTable = List.of(
             new RefValue(3, new IntType()), new RefValue(2, new RefType(new IntType())));
     private final Map<Integer, IValue> heap = Map.of(
